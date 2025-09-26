@@ -667,24 +667,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 		}
 		
-		protected override void OnOrderUpdate(Order order, double limitPrice, double stopPrice, int quantity, int filled, double averageFillPrice, OrderState orderState, DateTime time, ErrorCode error)
-		{
-			// Handle order state changes
-			if (orderState == OrderState.Filled)
-			{
-				consecutiveErrors = 0;
-				orderErrorOccurred = false;
-				Print("Order filled successfully: " + order.Name);
-			}
-			else if (orderState == OrderState.Rejected || orderState == OrderState.Cancelled)
-			{
-				Print("Order " + orderState.ToString() + ": " + order.Name);
-				HandleOrderError();
-			}
-		}
-		
 		protected override void OnExecutionUpdate(Execution execution, string executionId, double price, int quantity, MarketPosition marketPosition, string orderId, DateTime time)
 		{
+			// Reset error tracking on successful execution
+			consecutiveErrors = 0;
+			orderErrorOccurred = false;
+			
 			// Track wins and losses
 			if (execution.Order != null && execution.Order.OrderAction == OrderAction.BuyToCover || execution.Order.OrderAction == OrderAction.Sell)
 			{
